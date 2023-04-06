@@ -10,6 +10,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.marcelo.main.dto.UserDTO;
+import com.marcelo.main.entities.User;
+import com.marcelo.main.security.config.TokenService;
 
 @RestController
 @RequestMapping("/login")
@@ -18,11 +20,14 @@ public class AutenticationController {
 	@Autowired
 	private AuthenticationManager manager;
 	
+	@Autowired
+	private TokenService tokenService;
+	
 	@PostMapping
 	public ResponseEntity<?> efetuarLogin(@RequestBody UserDTO dto) {
 		var token = new UsernamePasswordAuthenticationToken(dto.login(), dto.password());
 		var auth = manager.authenticate(token);
-		return ResponseEntity.ok().build();
+		return ResponseEntity.ok(tokenService.generateToken((User) auth.getPrincipal()));
 		
 	}
 }

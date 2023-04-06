@@ -1,4 +1,4 @@
-package com.marcelo.main.config;
+package com.marcelo.main.security.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
