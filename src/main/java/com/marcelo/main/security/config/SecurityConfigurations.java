@@ -13,6 +13,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
 @Configuration
 @EnableWebSecurity
@@ -23,14 +24,17 @@ public class SecurityConfigurations {
 	
 	@Bean
 	public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+		http.headers().frameOptions().disable();
 		
 		return http.csrf().disable()
 				.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
 				.and().authorizeHttpRequests()
 				.requestMatchers(HttpMethod.POST, "/login").permitAll()
+				.requestMatchers(new AntPathRequestMatcher("/h2-console/**")).permitAll()
 				.anyRequest().authenticated()
 				.and().addFilterBefore(filter, UsernamePasswordAuthenticationFilter.class)
 				.build();
+		
 	}
 	
 	@Bean
