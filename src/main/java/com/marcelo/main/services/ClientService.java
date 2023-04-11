@@ -5,11 +5,13 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
 
 import com.marcelo.main.dto.ClientDTO;
 import com.marcelo.main.dto.ClientMinDTO;
+import com.marcelo.main.dto.EnderecoDTO;
 import com.marcelo.main.entities.Client;
 import com.marcelo.main.entities.Endereco;
 import com.marcelo.main.repositories.ClientRepository;
@@ -23,7 +25,6 @@ public class ClientService {
 	
 	@Autowired
 	private EnderecoRepository enderecoRepository;
-	
 	
 	@Transactional(readOnly = true)
 	public ClientMinDTO buscarPorCpf(String cpf) {
@@ -42,7 +43,7 @@ public class ClientService {
 		Client entity = new Client();
 		
 		toEntity(dto, entity);
-		
+				
 		return ClientDTO.mapClient(repository.save(entity));
 	}
 
@@ -61,27 +62,37 @@ public class ClientService {
 		return ClientDTO.mapClient(repository.save(entity));
 	}
 	
+	@Transactional(propagation = Propagation.SUPPORTS)
+	public void delete(Long id) {
+		repository.deleteById(id);
+	}
+	
 	private void toEntity(ClientDTO dto, Client entity) {
 		entity.setName(dto.name());
 		entity.setCpf(dto.cpf());
 		entity.setIncome(dto.income());
 		entity.setBirthDate(dto.birthDate());
 		entity.setChildren(dto.children());
+		Endereco endereco = new Endereco();
+		if (entity.getEndereco() == null) {
+			endereco = new RestTemplate()
+					.getForObject("https://viacep.com.br/ws/"+dto.endereco().cep() +"/json/", Endereco.class);
+		}
+		else {
+			endereco = enderecoRepository.getReferenceById(entity.getEndereco().getId());
+			EnderecoDTO endDto = EnderecoDTO.mapEndereco(
+					new RestTemplate()
+					.getForObject("https://viacep.com.br/ws/"+dto.endereco().cep() +"/json/", Endereco.class));
+			endereco.setBairro(endDto.bairro());
+			endereco.setCep(endDto.cep());
+			endereco.setLocalidade(endDto.localidade());
+			endereco.setLogradouro(endDto.logradouro());
+			endereco.setUf(endDto.uf());
 		
-		Endereco endereco = entity.getEndereco() == null ? 
-				new RestTemplate().getForObject("https://viacep.com.br/ws/"+dto.endereco().cep() +"/json/", Endereco.class) : 
-				new Endereco(
-						entity.getEndereco().getId(), 
-						dto.endereco().cep(), 
-						dto.endereco().logradouro(), 
-						dto.endereco().bairro(), 
-						dto.endereco().localidade(), 
-						dto.endereco().uf()
-						);
-		
-		endereco = enderecoRepository.save(endereco);
+		}
 		
 		entity.setEndereco(endereco);
+		
 	}
-	
+
 }

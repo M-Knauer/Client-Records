@@ -6,6 +6,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 
 @Entity
@@ -21,6 +22,9 @@ public class Endereco implements Serializable{
 	private String bairro;
 	private String localidade;
 	private String uf;
+	
+	@OneToOne(mappedBy = "endereco")
+	private Client client;
 	
 	public Endereco() {
 
@@ -94,6 +98,16 @@ public class Endereco implements Serializable{
 
 	public void setUf(String uf) {
 		this.uf = uf;
+	}
+
+
+	public Client getClient() {
+		return client;
+	}
+
+
+	public void setClient(Client client) {
+		this.client = client;
 	}
 
 }

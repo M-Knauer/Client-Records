@@ -13,7 +13,6 @@ public record ClientDTO(
 		LocalDate birthDate,
 		Integer children,
 		EnderecoDTO endereco
-		
 		) {
 	
 	public static ClientDTO mapClient(Client entity) {
