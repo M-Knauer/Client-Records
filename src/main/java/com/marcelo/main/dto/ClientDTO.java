@@ -15,6 +15,19 @@ public record ClientDTO(
 		EnderecoDTO endereco
 		) {
 	
+	public ClientDTO(Client entity) {
+		this(
+				entity.getId(),
+				entity.getName(), 
+				entity.getCpf(), 
+				entity.getIncome(), 
+				entity.getBirthDate(), 
+				entity.getChildren(),
+				new EnderecoDTO(entity.getEndereco())
+			);
+	}
+	
+	/*
 	public static ClientDTO mapClient(Client entity) {
         ClientDTO dto = new ClientDTO(
         		entity.getId(), 
@@ -22,8 +35,8 @@ public record ClientDTO(
                 entity.getCpf(), 
                 entity.getIncome(),
                 entity.getBirthDate(),
-                entity.getChildren(),
-                EnderecoDTO.mapEndereco(entity.getEndereco()));
+                entity.getChildren());
         return dto;
     }
+    */
 }

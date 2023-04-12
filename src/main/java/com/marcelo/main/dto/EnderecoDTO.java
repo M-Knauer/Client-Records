@@ -13,16 +13,14 @@ public record EnderecoDTO(
 		
 		) {
 	
-	public static EnderecoDTO mapEndereco(Endereco entity) {
-        EnderecoDTO dto = new EnderecoDTO(
-        		entity.getId(),
+	public EnderecoDTO(Endereco entity) {
+		this(
+				entity.getId(),
         		entity.getCep(),
         		entity.getLogradouro(),
         		entity.getBairro(),
         		entity.getLocalidade(),
         		entity.getUf()
-        		);
-        
-        return dto;
+        	);
     }
 }

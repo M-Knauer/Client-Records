@@ -8,11 +8,11 @@ public record UserDTO(
 		String password	
 	) {
 
-	public static UserDTO mapUser(User entity) {
-		UserDTO dto = new UserDTO(
+	public UserDTO(User entity) {
+		this(
 				entity.getId(),
 				entity.getLogin(), 
-				entity.getPassword());
-		return dto;
+				entity.getPassword()
+			);
 	}
 }

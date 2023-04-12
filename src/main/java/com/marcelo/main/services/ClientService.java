@@ -35,7 +35,7 @@ public class ClientService {
 	@Transactional(readOnly = true)
 	public ClientDTO findById(Long id) {
 		
-		return ClientDTO.mapClient(repository.findById(id).get());
+		return new ClientDTO(repository.findById(id).get());
 	}
 
 	@Transactional
@@ -44,13 +44,13 @@ public class ClientService {
 		
 		toEntity(dto, entity);
 				
-		return ClientDTO.mapClient(repository.save(entity));
+		return new ClientDTO(repository.save(entity));
 	}
 
 	@Transactional(readOnly = true)
 	public List<ClientDTO> findAll(Pageable pageable) {
 
-		return repository.findAll(pageable).stream().map(x -> ClientDTO.mapClient(x)).toList();
+		return repository.findAll(pageable).stream().map(ClientDTO::new).toList();
 	}
 
 	@Transactional
@@ -59,7 +59,7 @@ public class ClientService {
 		
 		toEntity(dto, entity);
 		
-		return ClientDTO.mapClient(repository.save(entity));
+		return new ClientDTO(repository.save(entity));
 	}
 	
 	@Transactional(propagation = Propagation.SUPPORTS)
@@ -80,7 +80,7 @@ public class ClientService {
 		}
 		else {
 			endereco = enderecoRepository.getReferenceById(entity.getEndereco().getId());
-			EnderecoDTO endDto = EnderecoDTO.mapEndereco(
+			EnderecoDTO endDto = new EnderecoDTO(
 					new RestTemplate()
 					.getForObject("https://viacep.com.br/ws/"+dto.endereco().cep() +"/json/", Endereco.class));
 			endereco.setBairro(endDto.bairro());

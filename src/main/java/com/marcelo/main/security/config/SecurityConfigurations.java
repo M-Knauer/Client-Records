@@ -29,7 +29,7 @@ public class SecurityConfigurations {
 		return http.csrf().disable()
 				.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
 				.and().authorizeHttpRequests()
-				.requestMatchers(HttpMethod.POST, "/login").permitAll()
+				.requestMatchers(HttpMethod.POST, "/auth/**").permitAll()
 				.requestMatchers(new AntPathRequestMatcher("/h2-console/**")).permitAll()
 				.anyRequest().authenticated()
 				.and().addFilterBefore(filter, UsernamePasswordAuthenticationFilter.class)
